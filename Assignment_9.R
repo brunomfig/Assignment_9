@@ -1,5 +1,4 @@
 # Packages to be used
-library(tidyr)
 library(RSQLite)
 library(dplyr)
 
