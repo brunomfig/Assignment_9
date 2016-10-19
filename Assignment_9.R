@@ -1,6 +1,7 @@
 # Packages to be used
 library(RSQLite)
 library(dplyr)
+library(ggplot2)
 
 # ---------- Problem 1 ----------
 # 2 Connect to the portal sqlite database
@@ -75,4 +76,23 @@ print(avgweight_sp_s)
 dbWriteTable(portalconn, "avgweight_sp_s", avgweight_sp_s, overwrite = TRUE)
 
 # ---------- Problem 4 ----------
+# Connect to the database
+ordwaydb <- "./data/ordway_mammals.sqlite"
+ordwayconn <- dbConnect(drv = SQLite(), dbname = ordwaydb)
 
+# List of table in the database
+dbListTables(ordwayconn)
+
+# List of columns in the tables
+dbListFields(ordwayconn, "capture")
+dbListFields(ordwayconn, "plots")
+dbListFields(ordwayconn, "traps")
+
+# Total number of disturbed traps per plot
+q6 <- "SELECT plotID, SUM(disturbedTraps) AS numtraps
+      FROM plots
+      GROUP BY plotID"
+disttraps <- dbGetQuery(ordwayconn, q6) print(disttraps)
+
+# Frequency histogram of the data
+ggplot(data = disttraps, aes(x = plotID, y = numtraps), geom_histogram(binwidth = 3))
